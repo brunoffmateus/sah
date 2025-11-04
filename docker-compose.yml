@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: devlink
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: devlink
+    ports:
+      - "5433:5432"
+    networks:
+      - sah-net
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: devlink
+      DB_PASSWORD: secret
+      DB_NAME: devlink
+      JWT_SECRET: supersecretjwt
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - sah-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - sah-net
+
+networks:
+  sah-net:
+    driver: bridge

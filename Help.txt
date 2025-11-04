@@ -1,0 +1,56 @@
+sudo -i -u postgres
+	psql
+	\c devlink
+	\dt
+
+
+*****
+run backend:
+
+npm run dev
+
+*****
+run frontend:
+
+npm start
+
+*****
+run dockerized version:
+docker compose up --build
+docker compose down
+
+*****
+DB:
+
+Users:
+	id (PK)
+	username (unique)
+	password (hashed)
+	role (enum: "Patients", "doctor", "admin")
+
+Patientss:
+	patientId (PK)
+	userId (FK → Users.id)
+	name
+	birthdate
+	address
+
+Doctorss:
+	doctorId (PK)
+	userId (FK → Users.id)
+	specialty (Orthopedy, Cardiology, Dermatology)
+	room
+
+Appointments:
+	id (PK)
+	patientId (FK → Patientss.patientId)
+	doctorId (FK → Doctorss.doctorId)
+	date (datetime)
+	status (scheduled, completed, canceled)
+
+MedicalRecords:
+	id (PK)
+	appointmentId (FK → Appointments.id)
+	diagnosis
+	treatment
+	notes
