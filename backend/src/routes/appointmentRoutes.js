@@ -1,79 +1,74 @@
 import express from "express";
 import Appointment from "../models/Appointment.js";
-import Patients from "../models/Patient.js";
+import User from "../models/User.js";
 import Doctors from "../models/Doctor.js";
-import authDoc from "../middleware/auth.js";
 
 const router = express.Router();
 
-// READ all
-router.get("/", async (req, res) => {
+// Get all doctors from database
+router.get("/doctors", async (req, res) => {
   try {
-    const appointments = await Appointment.findAll({
-      include: [Patients, Doctors],
+    console.log("Try");
+    const doctors = await Doctors.findAll({
+      include: {
+        model: User,
+        name: "name", // pull doctor's name from Users table
+      },
+      id: "userId",
     });
-    res.json(appointments);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error fetching appointments" });
+    const formatted = doctors.map(doc => ({
+      id: doc.id,
+      name: doc.User.name,
+    }));
+    console.log("Doctors:", formatted);
+    res.json(formatted);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching doctors" });
   }
 });
 
-// CREATE
-router.post("/create", authDoc, async (req, res) => {
+// Book appointment
+router.post("/book", async (req, res) => {
   try {
-    // req.user.id comes from JWT payload
-    const doctor = await Doctor.findOne({ where: { userId: req.user.id } });
-    if (!doctor) return res.status(403).json({ message: "Only doctors can create an appointment" });
+    const { username, doctorId, date, time } = req.body;
+    if (!username || !doctorId || !date || !time) {
+      return res.status(400).json({
+        message: "Missing one of the required fields: username, doctorId, date, time"
+      });
+    }
 
-    const { patientId, date } = req.body;
-    const appointment = await Appointment.create({
-      patientId,
-      doctorId: doctor.id,
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    const parsedDoctorId = parseInt(doctorId, 10);
+
+    const appointment = await Appointment.findOne({
+      where: {
+        doctorId: parsedDoctorId,
+        date,
+        time,
+      },
+    });
+    if (appointment) {
+      return res.status(400).json({ message: "This time slot is already booked for the selected doctor" });
+    }
+
+    await Appointment.create({
       date,
+      time,
+      patientId: user.id,
+      doctorId: parsedDoctorId,
     });
-    res.json(appointment);
-    res.json({ message: "Created" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error updating appointment" });
-  }
-});
 
-// UPDATE
-router.put("/update", authDoc, async (req, res) => {
-  try {
-    const { status } = req.body;
-    const doctor = await Doctor.findOne({ where: { userId: req.user.id } });
-    if (!doctor) return res.status(403).json({ message: "Only doctors can update an appointment" });
-
-    const appointment = await Appointment.findByPk(req.params.id);
-    if (!appointment) return res.status(404).json({ message: "Not found" });
-
-    appointment.status = status;
-    await appointment.save();
-    res.json(appointment);
-    res.json({ message: "Updated" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error updating appointment" });
-  }
-});
-
-// DELETE
-router.delete("/read", authDoc, async (req, res) => {
-  try {
-    const doctor = await Doctor.findOne({ where: { userId: req.user.id } });
-    if (!doctor) return res.status(403).json({ message: "Only doctors can delete an appointment" });
-
-    const appointment = await Appointment.findByPk(req.params.id);
-    if (!appointment) return res.status(404).json({ message: "Not found" });
-
-    await appointment.destroy();
-    res.json({ message: "Deleted" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error deleting appointment" });
+    res.status(201).json({ message: "Appointment booked successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error booking appointment",
+      error: error.message,
+      stack: error.stack,
+    });
   }
 });
 

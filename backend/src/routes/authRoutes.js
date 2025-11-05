@@ -99,13 +99,10 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     // Check if user already exists
-    const userFound = await User.findOne({ where: { username } });
-    if (!userFound) {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
       return res.status(400).json({ message: "User does not exist" });
     }
-
-    // Find username
-    const user = await User.findOne({ where: { username } });
 
     if (typeof (password) !== String && !bcrypt.compare(password, user.password)) {
       return res.status(400).json({ message: "Wrong Password" });

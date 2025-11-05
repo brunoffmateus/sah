@@ -36,13 +36,13 @@ export default function RegisterDoctorForm() {
       <h2>Register</h2>
       <input
         type="text"
-        placeholder="Unique Username"
+        placeholder="Username*"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
       <input
         type="text"
-        placeholder="Full Name"
+        placeholder="Name*"
         value={name}
         onChange={(e) => setFullName(e.target.value)}
       />
@@ -60,11 +60,17 @@ export default function RegisterDoctorForm() {
       />
       <input
         type="password"
-        placeholder="Password"
+        placeholder="Password*"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button type="submit">Register</button>
+      <button
+        disabled={!username || !password || !name}
+        onClick={handleSubmit}
+      >
+        Register
+      </button>
+      <p>* required fields</p>
       <p>{message}</p>
     </form>
   );

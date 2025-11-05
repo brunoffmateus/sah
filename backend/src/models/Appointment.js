@@ -5,12 +5,12 @@ import Doctors from "./Doctor.js";
 
 const Appointment = sequelize.define("Appointment", {
   date: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  status: {
-    type: DataTypes.ENUM("scheduled", "completed", "canceled"),
-    defaultValue: "scheduled",
+  time: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 });
 
