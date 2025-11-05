@@ -15,7 +15,7 @@ function App() {
         <Route path="/register/doctor" element={<RegisterDoctor />} />
         <Route path="/login" element={<LoginForm />} />
         <Route
-          path="/doctor/appointments"
+          path="/doctorAppointments"
           element={
             <ProtectedRoute>
               <DoctorAppointments />

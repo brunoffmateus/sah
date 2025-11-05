@@ -78,7 +78,7 @@ router.post("/register/doctor", async (req, res) => {
     const transaction = await sequelize.transaction();
     const user = await User.create(
       { username, name, password: hashedPassword },
-      { transaction: t }
+      { transaction }
     );
     await Doctor.create(
       { userId: user.id, specialty: specialty || null, room },
@@ -110,8 +110,6 @@ router.post("/login", async (req, res) => {
     if (typeof (password) !== String && !bcrypt.compare(password, user.password)) {
       return res.status(400).json({ message: "Wrong Password" });
     }
-
-    //REDIRECT to the logged in page??
 
     const token = jwt.sign(
       { id: user.id, username: user.username },

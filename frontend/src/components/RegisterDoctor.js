@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterDoctorForm() {
   const [username, setUsername] = useState("");
@@ -7,6 +8,7 @@ export default function RegisterDoctorForm() {
   const [room, setRoom] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +22,9 @@ export default function RegisterDoctorForm() {
 
       const data = await res.json();
       setMessage(data.message || "Something went wrong");
+      if (res.ok) {
+        navigate("/login");
+      }
     } catch (err) {
       console.error(err);
       setMessage("Error connecting to server");
