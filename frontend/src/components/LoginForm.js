@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -20,8 +21,14 @@ export default function RegisterForm() {
       const data = await res.json();
       setMessage(data.message);
       if (res.ok && data.token) {
-        // Save token in localStorage
-        navigate("/doctorAppointments");
+        const decoded = jwtDecode(data.token);
+        if (decoded.role === "doctor") {
+          navigate(`/dashboard/doctor/${decoded.doctorId}`);
+        } else if (decoded.role === "patient") {
+          navigate(`/dashboard/patient/${decoded.patientId}`);
+        } else {
+          navigate("/"); // TODO: fallback to where?
+        }
       }
     } catch (err) {
       console.error(err);

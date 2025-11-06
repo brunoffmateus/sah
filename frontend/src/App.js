@@ -3,8 +3,9 @@ import LoginForm from "./components/LoginForm";
 import Home from "./components/Home";
 import RegisterDoctor from "./components/RegisterDoctor";
 import RegisterPatient from "./components/RegisterPatient";
-import DoctorAppointments from "./components/DoctorAppointments";
+import BookAppointments from "./components/BookAppointments";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -15,13 +16,14 @@ function App() {
         <Route path="/register/doctor" element={<RegisterDoctor />} />
         <Route path="/login" element={<LoginForm />} />
         <Route
-          path="/doctorAppointments"
+          path="/bookAppointment"
           element={
             <ProtectedRoute>
-              <DoctorAppointments />
+              <BookAppointments />
             </ProtectedRoute>
           }
         />
+        <Route path="/dashboard/:role/:id" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );

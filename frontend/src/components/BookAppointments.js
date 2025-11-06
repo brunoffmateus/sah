@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function DoctorAppointments() {
+function BookAppointments() {
   const [username, setUsername] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
@@ -95,15 +95,4 @@ function DoctorAppointments() {
   );
 }
 
-export default DoctorAppointments;
-
-
-// use token here? or is there a way to get info such as Name, and username client side?
-
-// also create a drop down with all doctors names to choose the desired doctor
-// then only allow dates/times not included in the DB
-// also maybe do a drop down for the dates/hours, that only allows 15 to 15 mins
-
-// logins should not redirect to this anymore:
-// there should be a my Appointments before this one, so users can check them
-// and new Appointment button that redirects them here for the ones where userId in Pat.userId
+export default BookAppointments;

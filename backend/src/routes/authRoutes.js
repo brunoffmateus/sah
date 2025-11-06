@@ -108,11 +108,25 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Wrong Password" });
     }
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    let token;
+    const doctor = await Doctor.findOne({ where: { userId: user.id } });
+    const patient = await Patient.findOne({ where: { userId: user.id } });
+
+    if (doctor) {
+      token = jwt.sign(
+        { id: user.id, doctorId: doctor.id, username: user.username, role: "doctor" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+    } else if (patient) {
+      token = jwt.sign(
+        { id: user.id, patientId: patient.id, username: user.username, role: "patient" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+    } else {
+      return res.status(400).json({ message: "User is neither Doctor or Patient" });
+    }
 
     res.json({
       message: "Login successful",

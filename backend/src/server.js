@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import sequelize from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -12,9 +13,11 @@ app.use(cors());
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/appointments", appointmentRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 
 app.get("/", (req, res) => {
+  console.log(`[${req.method}] ${req.path}`);
   res.send("DevLink API is running 🚀 with PostgreSQL");
 });
 

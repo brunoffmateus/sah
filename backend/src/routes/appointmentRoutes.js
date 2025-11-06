@@ -1,15 +1,14 @@
 import express from "express";
 import Appointment from "../models/Appointment.js";
 import User from "../models/User.js";
-import Doctors from "../models/Doctor.js";
+import Doctor from "../models/Doctor.js";
 
 const router = express.Router();
 
 // Get all doctors from database
 router.get("/doctors", async (req, res) => {
   try {
-    console.log("Try");
-    const doctors = await Doctors.findAll({
+    const doctors = await Doctor.findAll({
       include: {
         model: User,
         name: "name", // pull doctor's name from Users table
